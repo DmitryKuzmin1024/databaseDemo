@@ -1,3 +1,3 @@
 package com.example.databaseDemo
 
-annotation class NoArgConstructor()
+annotation class NoArgConstructor
