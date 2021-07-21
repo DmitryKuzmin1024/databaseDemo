@@ -4,26 +4,20 @@ import com.example.databaseDemo.model.DataBaseModel
 import com.example.databaseDemo.model.CsvModel
 import com.example.databaseDemo.repo.DataBaseRepository
 import com.opencsv.bean.CsvToBeanBuilder
+import java.io.File
 import java.io.FileReader
 
 class CsvLogic {
-    private fun readCsv(
-        fileString: String =
-            "/home/kuzya/Desktop/databaseDemo/src/main/resources/example.csv"
-    )
-            : MutableList<CsvModel> {
+    private fun readCsv(file: File): MutableList<CsvModel> {
         return CsvToBeanBuilder<CsvModel>(
-            FileReader(fileString)
+            FileReader(file)
         )
             .withType(CsvModel::class.java)
             .build()
             .parse()
     }
 
-    private fun parseCsvToDataBase(
-        csv: MutableList<CsvModel>
-    )
-            : MutableList<DataBaseModel> {
+    private fun parseCsvToDataBase(csv: MutableList<CsvModel>): MutableList<DataBaseModel> {
         return csv.map {
             DataBaseModel(
                 it.year,
@@ -37,9 +31,7 @@ class CsvLogic {
         }.toMutableList()
     }
 
-    fun saveCsvToDataBase(repository: DataBaseRepository) {
-        repository.saveAll(
-            parseCsvToDataBase(readCsv())
-        )
+    fun saveCsvToDataBase(repository: DataBaseRepository, file: File) {
+        repository.saveAll(parseCsvToDataBase(readCsv(file)))
     }
 }

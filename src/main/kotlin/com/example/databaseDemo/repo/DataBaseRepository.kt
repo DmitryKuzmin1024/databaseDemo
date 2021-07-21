@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface DataBaseRepository : CrudRepository<DataBaseModel, Long> {
-    fun findByValue(value: String): Iterable<DataBaseModel>
+    fun findByValue(value: String): MutableIterable<DataBaseModel>
 }

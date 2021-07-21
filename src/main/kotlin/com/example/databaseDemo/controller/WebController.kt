@@ -2,28 +2,45 @@ package com.example.databaseDemo.controller
 
 import com.example.databaseDemo.CsvLogic
 import com.example.databaseDemo.repo.DataBaseRepository
-import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
+import java.io.File
 
 @RestController
 class WebController(
-    private val repository: DataBaseRepository
+    private val repository: DataBaseRepository,
+    @Value("\${file.upload-dir}")
+    private val fileDirectory: String
 ) {
     private val csvLogic = CsvLogic()
 
-    @RequestMapping("/save")
-    fun save(): String {
-        csvLogic.saveCsvToDataBase(repository)
-        return "Done"
+//    @PostMapping("/upload")
+//    fun fileUpload(@RequestParam("File") file: MultipartFile): ResponseEntity<Any?>? {
+//        val myFile = File(fileDirectory + file.originalFilename)
+//        myFile.createNewFile()
+//        csvLogic.saveCsvToDataBase(repository, myFile)
+//        return ResponseEntity("CSV Uploaded Successfully ${file.size}", HttpStatus.OK)
+//    }
+
+    @PostMapping("/upload")
+    fun fileUpload(@RequestParam("File") file: MultipartFile): String {
+        csvLogic.saveCsvToDataBase(
+            repository,
+            File(fileDirectory + file.originalFilename)
+        )
+        return "CSV uploaded ${file.size}"
     }
 
-    @RequestMapping("/findall")
+    @GetMapping("/hello")
+    fun sayHello() = "Hello there!"
+
+    @GetMapping("/findall")
     fun findAll() = repository.findAll()
 
-    @RequestMapping("/findbyid/{id}")
-    fun findById(@PathVariable id: Long) = repository.findById(id)
+    @GetMapping("/findbyid")
+    fun findById(@RequestParam("id") id: Long) = repository.findById(id)
 
-    @RequestMapping("findbyvalue/{value}")
-    fun findByValue(@PathVariable value: String) = repository.findByValue(value)
+    @GetMapping("/findbyvalue")
+    fun findByValue(@RequestParam("value") value: String) = repository.findByValue(value)
 }
